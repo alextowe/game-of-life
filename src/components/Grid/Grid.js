@@ -10,7 +10,10 @@ export default class Grid extends React.Component {
         return (
             <div 
                 className='Grid'
-                style={{width: WIDTH, height: HEIGHT}}> 
+                style={{
+                    width: WIDTH, 
+                    height: HEIGHT, 
+                    backgroundSize: `${CELL_WIDTH}px ${CELL_WIDTH}px`}}> 
             </div>
         )
     }
