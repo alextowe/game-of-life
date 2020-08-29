@@ -1,0 +1,13 @@
+.GameBoard {  
+    position: relative;  
+    margin: 0 auto;  
+    background-color: #000;
+    background-image:    linear-gradient(#333 1px, transparent 1px),    
+        linear-gradient(90deg, #333 1px, transparent 1px);
+}
+
+.Cell {  
+    background: rgb(102, 226, 30);  position: absolute;
+    -webkit-box-shadow: 0 0 10px #fff;
+        box-shadow: 0 0 10px #fff;
+}
