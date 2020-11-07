@@ -31,6 +31,8 @@ export default class GameBoard extends React.Component {
 
   state = {
     cells: [],
+    interval: 100,
+    isRunning: false,
   }
 
   makeEmptyGrid() {
@@ -80,21 +82,44 @@ export default class GameBoard extends React.Component {
     }
 
     this.setState({ cells: this.makeCells() })
-}
+  }
+
+  runGame = () => {
+    this.setState({isRunning:true});
+  }
+
+  stopGame = () => {
+    this.setState({isRunning: false});
+  }
+
+  handleIntervalChange = (event) => {
+    this.setState({interval: event.target.value})
+  }
 
   render () {
     const { cells } = this.state
     return (
-      <div className='GameBoard'
-        style={{ width: WIDTH, height: HEIGHT,
-        backgroundSize: `${CELL_WIDTH}px ${CELL_WIDTH}px`}}
-        onClick={this.handleClick}        
-        ref={(n) => { this.gridRef = n; }}
-      >
-        {cells.map(cell => (
-          <Cell x={cell.x} y={cell.y} key={`${cell.x},${cell.y}`}/>
-        ))}
-      </div>
+      <>
+        <div className='GameBoard'
+          style={{ width: WIDTH, height: HEIGHT,
+          backgroundSize: `${CELL_WIDTH}px ${CELL_WIDTH}px`}}
+          onClick={this.handleClick}        
+          ref={(n) => { this.gridRef = n; }}
+        >
+          {cells.map(cell => (
+            <Cell x={cell.x} y={cell.y} key={`${cell.x},${cell.y}`}/>
+          ))}
+        </div>
+        <div className='controls'>
+            Update every <input value={this.state.interval} onChange={this.handleIntervalChange}/>
+            {isRunning ? 
+              <button className='button'>Stop</button> :
+              <button className='button'>Run</button>
+            }
+            
+
+        </div>
+      </>
     )
   }
 }
