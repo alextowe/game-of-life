@@ -1,5 +1,12 @@
+.controls {
+    height: 3em;
+    border-bottom: 1px solid #333;
+}
+
 .GameBoard {  
-    position: relative;  
+    position: relative;
+    width : 100vw;
+    height: 100vh;
     margin: 0 auto;  
     background-color: #000;
     background-image:    linear-gradient(#333 1px, transparent 1px),    

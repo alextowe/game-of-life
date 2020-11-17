@@ -4,7 +4,7 @@ import './GameBoard.css'
 //temporary values for the board until controls are setup
 const WIDTH = 800
 const HEIGHT = 600
-const CELL_WIDTH = 20
+const CELL_WIDTH = 10
 
 class Cell extends React.Component {
 
@@ -149,8 +149,16 @@ export default class GameBoard extends React.Component {
     const { cells, interval, isRunning} = this.state
     return (
       <>
+        <div className='controls'>
+          Update every <input value={interval} onChange={this.handleIntervalChange}/>msec
+          {isRunning ? 
+            <button className='button' onClick={this.stopGame}>Stop</button> :
+            <button className='button' onClick={this.runGame}>Run</button>
+          }
+        </div>
+        
         <div className='GameBoard'
-          style={{ width: WIDTH, height: HEIGHT,
+          style={{ 
           backgroundSize: `${CELL_WIDTH}px ${CELL_WIDTH}px`}}
           onClick={this.handleClick}        
           ref={(n) => { this.gridRef = n; }}
@@ -159,15 +167,7 @@ export default class GameBoard extends React.Component {
             <Cell x={cell.x} y={cell.y} key={`${cell.x},${cell.y}`}/>
           ))}
         </div>
-        <div className='controls'>
-            Update every <input value={interval} onChange={this.handleIntervalChange}/>msec
-            {isRunning ? 
-              <button className='button' onClick={this.stopGame}>Stop</button> :
-              <button className='button' onClick={this.runGame}>Run</button>
-            }
-            
-
-        </div>
+       
       </>
     )
   }
