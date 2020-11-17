@@ -1,41 +1,23 @@
 import React from 'react'
-import './GameBoard.css'
+import './MainPanel.css'
+import Cell from '../Cell/Cell'
 
-//temporary values for the board until controls are setup
-const WIDTH = 800
-const HEIGHT = 600
-const CELL_WIDTH = 10
-
-class Cell extends React.Component {
-
-  render() {
-      const { x, y } = this.props;
-      return (
-          <div className="Cell" style={{
-              left: `${CELL_WIDTH * x + 1}px`,
-              top: `${CELL_WIDTH * y + 1}px`,
-              width: `${CELL_WIDTH - 1}px`,
-              height: `${CELL_WIDTH - 1}px`,
-          }} />
-      );
-  }
-}
-
-export default class GameBoard extends React.Component {
+export default class ControlPanel extends React.Component {
   constructor(props) {
-    super()
-    this.rows = HEIGHT / CELL_WIDTH
-    this.cols = WIDTH / CELL_WIDTH
-    this.grid = this.makeEmptyGrid()
+    super(props)
+    this.rows = window.innerHeight / this.state.step
+    this.cols = window.innerWidth / this.state.step
+    this.grid = this.makeNewGrid()
   }
 
   state = {
     cells: [],
+    step: 10,
     interval: 100,
     isRunning: false,
   }
 
-  makeEmptyGrid() {
+  makeNewGrid() {
     let grid = []
     for (let y = 0; y < this.rows; y++) {
       grid[y] = []
@@ -74,8 +56,8 @@ export default class GameBoard extends React.Component {
     const offsetX = event.clientX - elemOffset.x
     const offsetY = event.clientY - elemOffset.y
     
-    const x = Math.floor(offsetX / CELL_WIDTH)
-    const y = Math.floor(offsetY / CELL_WIDTH)
+    const x = Math.floor(offsetX / this.state.step)
+    const y = Math.floor(offsetY / this.state.step)
 
     if (x >= 0 && x <= this.cols && y >= 0 && y <= this.rows) {
         this.grid[y][x] = !this.grid[y][x]
@@ -98,7 +80,7 @@ export default class GameBoard extends React.Component {
   }
 
   runIteration() {
-    let newGrid = this.makeEmptyGrid()
+    let newGrid = this.makeNewGrid()
 
     for (let y = 0; y < this.rows; y++) {
       for (let x = 0; x < this.cols; x++) {
@@ -141,35 +123,38 @@ export default class GameBoard extends React.Component {
     return neighbors
   }
 
+  handleStepChange = (event) => {
+    this.setState({step: event.target.value})
+  }
+
   handleIntervalChange = (event) => {
     this.setState({interval: event.target.value})
   }
 
-  render () {
-    const { cells, interval, isRunning} = this.state
-    return (
-      <>
-        <div className='controls'>
-          Update every <input value={interval} onChange={this.handleIntervalChange}/>msec
+  render() {
+      
+    const { cells, step, interval, isRunning} = this.state
+      return (
+        <div className='MainPanel'>
+        <section className='Controls'>
+          <p className='control'>Cell size: {step} <input value={step}  type="range" min="5" max="15" class="slider" id="stepSlider" onChange={this.handleStepChange}/></p>
+          <p className='control'>Update every <input value={interval} onChange={this.handleIntervalChange}/> msec</p>
           {isRunning ? 
             <button className='button' onClick={this.stopGame}>Stop</button> :
             <button className='button' onClick={this.runGame}>Run</button>
           }
-        </div>
-        
-        <div className='GameBoard'
-          style={{ 
-          backgroundSize: `${CELL_WIDTH}px ${CELL_WIDTH}px`}}
-          onClick={this.handleClick}        
-          ref={(n) => { this.gridRef = n; }}
-        >
-          {cells.map(cell => (
-            <Cell x={cell.x} y={cell.y} key={`${cell.x},${cell.y}`}/>
-          ))}
-        </div>
-       
-      </>
-    )
+        </section>
+        <div className='Grid'
+        style={{ width: window.innerWidth, height: window.innerHeight,
+        backgroundSize: `${step}px ${step}px`}}
+        onClick={this.handleClick}        
+        ref={(n) => { this.gridRef = n; }}
+      >
+        {cells.map(cell => (
+          <Cell x={cell.x} y={cell.y} key={`${cell.x},${cell.y}`} step={step}/>
+        ))}
+      </div>
+      </div>
+      );
   }
 }
-

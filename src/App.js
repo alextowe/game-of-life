@@ -1,12 +1,12 @@
 import React from 'react'
 import './App.css'
-import GameBoard from './GameBoard/GameBoard'
+import MainPanel from './MainPanel/MainPanel'
 
 export default class App extends React.Component {
   render () {
     return (
       <div className='App'>
-        <GameBoard />
+        <MainPanel />
       </div>
     )
   }
