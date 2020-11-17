@@ -23,7 +23,7 @@ class Cell extends React.Component {
 
 export default class GameBoard extends React.Component {
   constructor(props) {
-    super(props)
+    super()
     this.rows = HEIGHT / CELL_WIDTH
     this.cols = WIDTH / CELL_WIDTH
     this.grid = this.makeEmptyGrid()
@@ -85,11 +85,60 @@ export default class GameBoard extends React.Component {
   }
 
   runGame = () => {
-    this.setState({isRunning:true});
+    this.setState({isRunning: true})
+    this.runIteration()
   }
 
   stopGame = () => {
-    this.setState({isRunning: false});
+    this.setState({isRunning: false})
+    if (this.timeoutHandler) {      
+      window.clearTimeout(this.timeoutHandler)      
+      this.timeoutHandler = null
+    }
+  }
+
+  runIteration() {
+    let newGrid = this.makeEmptyGrid()
+
+    for (let y = 0; y < this.rows; y++) {
+      for (let x = 0; x < this.cols; x++) {
+        let neighbors = this.calculateNeighbors(this.grid, x, y)
+        if (this.grid[y][x]) {
+          if (neighbors === 2 || neighbors === 3) {
+            newGrid[y][x] = true
+          } else {
+            newGrid[y][x] = false
+          }
+        } else {
+          if (!this.grid[y][x] && neighbors === 3) {
+            newGrid[y][x] = true
+          }
+        }
+      }
+    }
+    this.grid = newGrid    
+    this.setState({ cells: this.makeCells() })
+
+    this.timeoutHandler = window.setTimeout(() => {      
+      this.runIteration()    
+    }, this.state.interval)  
+  }
+
+  calculateNeighbors(grid, x, y) {
+    let neighbors = 0
+    const dirs = [[-1, -1], [-1, 0], [-1, 1], [0, 1], [1, 1], [1, 0], [1, -1], [0, -1]]
+
+    for (let i = 0; i < dirs.length; i++) {
+      const dir = dirs[i]
+      let y1 = y + dir[0]
+      let x1 = x + dir[1]
+
+      if (x1 >= 0 && x1 < this.cols && y1 >= 0 && y1 < this.rows && grid[y1][x1]) {
+        neighbors++
+      }
+    }
+
+    return neighbors
   }
 
   handleIntervalChange = (event) => {
@@ -97,7 +146,7 @@ export default class GameBoard extends React.Component {
   }
 
   render () {
-    const { cells } = this.state
+    const { cells, interval, isRunning} = this.state
     return (
       <>
         <div className='GameBoard'
@@ -111,10 +160,10 @@ export default class GameBoard extends React.Component {
           ))}
         </div>
         <div className='controls'>
-            Update every <input value={this.state.interval} onChange={this.handleIntervalChange}/>
+            Update every <input value={interval} onChange={this.handleIntervalChange}/>msec
             {isRunning ? 
-              <button className='button'>Stop</button> :
-              <button className='button'>Run</button>
+              <button className='button' onClick={this.stopGame}>Stop</button> :
+              <button className='button' onClick={this.runGame}>Run</button>
             }
             
 
