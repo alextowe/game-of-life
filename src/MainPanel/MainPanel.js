@@ -131,18 +131,35 @@ export default class ControlPanel extends React.Component {
     this.setState({interval: event.target.value})
   }
 
+  handleClear = () => {
+    this.grid = this.makeNewGrid()
+    this.setState({ cells: this.makeCells()})
+  }
+
+  handleRandom = () => {
+    for (let y = 0; y < this.rows; y++) {
+      for (let x = 0; x < this.cols; x++) {
+        this.grid[y][x] = (Math.random() >= 0.5)
+      }
+    }
+  }
+
   render() {
       
     const { cells, step, interval, isRunning} = this.state
       return (
         <div className='MainPanel'>
         <section className='Controls'>
-          <p className='control'>Cell size: {step} <input value={step}  type="range" min="5" max="15" class="slider" id="stepSlider" onChange={this.handleStepChange}/></p>
+          <p className='control'>Grid size: <input value={step}  type="range" min="5" max="15" class="slider" id="stepSlider" onChange={this.handleStepChange}/></p>
           <p className='control'>Update every <input value={interval} onChange={this.handleIntervalChange}/> msec</p>
+          
           {isRunning ? 
-            <button className='button' onClick={this.stopGame}>Stop</button> :
-            <button className='button' onClick={this.runGame}>Run</button>
+            <button className='button control' onClick={this.stopGame}>Stop</button> :
+            <button className='button control' onClick={this.runGame}>Run</button>
           }
+
+            <button className='button control' onClick={this.handleRandom}>Random</button>
+            <button className='button control' onClick={this.handleClear}>Clear</button>
         </section>
         <div className='Grid'
         style={{ width: window.innerWidth, height: window.innerHeight,
@@ -151,7 +168,7 @@ export default class ControlPanel extends React.Component {
         ref={(n) => { this.gridRef = n; }}
       >
         {cells.map(cell => (
-          <Cell x={cell.x} y={cell.y} key={`${cell.x},${cell.y}`} step={step}/>
+          <Cell key={`${cell.x},${cell.y}`} cell={cell} step={step}/>
         ))}
       </div>
       </div>
