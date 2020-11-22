@@ -41,11 +41,15 @@
     position: relative;
     margin: 0 auto;  
     background-color: #000;
-    background-image:    linear-gradient(#333 1px, transparent 1px),    
-        linear-gradient(90deg, #333 1px, transparent 1px);
 }
 
-.Cell {  
+.Cell {
+    border: 1px solid #333;
+    position: absolute;
+    display: inline-block;
+}
+
+.Cell:active {  
     background: rgb(102, 226, 30);  
     position: absolute;
     -webkit-box-shadow: 0 0 10px #fff;
